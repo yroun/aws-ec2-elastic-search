@@ -1,4 +1,4 @@
-## Amazon Linux 2 (CentOS)
+## Elastic Search in Amazon Linux 2 (CentOS)
 
 ### Install OpenJDK
 
@@ -55,4 +55,25 @@ sudo /bin/systemctl enable elasticsearch.service
 
 ```
 curl --cacert /etc/elasticsearch/certs/http_ca.crt -u elastic https://localhost:9200
+```
+
+### (Optional) Install EC2 discovery Plugin
+
+(IAM of DescribeInstances policy needed)
+
+```
+/usr/share/elasticsearch/bin/elasticsearch-plugin install --batch discovery-ec2
+```
+
+elasticsearch/yml
+
+```
+...
+network.bind_host: 0.0.0.0
+network.publish_host: _ec2_
+...
+discovery.seed_providers: ec2
+discovery.ec2.groups: es
+discovery.ec2.any_group: true
+...
 ```
