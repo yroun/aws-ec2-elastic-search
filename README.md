@@ -44,6 +44,13 @@ chown -R elasticsearch:elasticsearch /etc/elasticsearch
 
 printf "password" | sudo /usr/share/elasticsearch/bin/elasticsearch-keystore add "bootstrap.password" -x
 
+### Edit /etc/elasticsearch/elasticsearch.yml
+
+```
+sudo su elasticsearch -s /bin/bash
+vim /etc/elasticsearch/elasticsearch.yml
+```
+
 ### Running Elastic Search with systemd
 
 ```
@@ -76,4 +83,48 @@ discovery.seed_providers: ec2
 discovery.ec2.groups: es
 discovery.ec2.any_group: true
 ...
+```
+
+
+## Kibana
+
+/etc/yum.repos.d/kibana.repo
+
+```
+[kibana]
+name=Kibana repository for 8.x packages
+baseurl=https://artifacts.elastic.co/packages/8.x/yum
+gpgcheck=1
+gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+enabled=1
+autorefresh=1
+type=rpm-md
+```
+
+### Install Kibana
+
+```
+yum install -y kibana
+```
+
+### Change ownership of Kibana
+
+```
+chown -R kibana:kibana /usr/share/kibana
+chown -R kibana:kibana /var/lib/kibana
+chown -R kibana:kibana /var/log/kibana
+chown -R kibana:kibana /etc/kibana
+```
+
+### Edit /etc/kibana/kibana.yml
+
+```
+sudo su kibana -s /bin/bash
+vim /etc/kibana/kibana.yml
+```
+
+### Elastic Search changes the password for Kibana
+
+```
+curl -X POST -H 'Content-Type: application/json' http://localhost:9200/_security/user/kibana_system/_password -d '{"password": ""}' -u "elastic":""
 ```
